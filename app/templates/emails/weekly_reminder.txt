@@ -1,0 +1,51 @@
+MONEY SAVER - Weekly Savings Reminder
+
+Hi {{ user_name }}! 👋
+
+It's time for your weekly savings check-in. Here's how you're doing:
+
+============================================
+📊 SAVINGS SUMMARY
+============================================
+
+• Total Saved: £{{ "%.2f"|format(total_saved_amount) }}
+• This Week's Target: £{{ "%.2f"|format(total_target_this_week) }}
+• Overall Progress: {{ overall_progress_percentage }}%
+
+💬 {{ motivation_message }}
+
+{% if is_behind_schedule %}
+============================================
+⚠️  CATCH-UP OPPORTUNITY
+============================================
+
+You're {{ total_weeks_behind }} week{{ 's' if total_weeks_behind > 1 else '' }} behind your savings schedule.
+
+💡 {{ catch_up_suggestion }}
+
+{% endif %}
+============================================
+🎯 YOUR SAVINGS PLANS
+============================================
+
+{% for plan in plan_summaries %}
+→ {{ plan.name }}{% if not plan.on_track %} ⚠️ {{ plan.weeks_behind }} week{{ 's' if plan.weeks_behind > 1 else '' }} behind{% else %} ✅ On track{% endif %}
+
+  Progress: £{{ "%.2f"|format(plan.saved_amount) }} of £{{ "%.2f"|format(plan.target_amount) }} ({{ plan.progress_percentage }}%)
+  Weekly Target: £{{ "%.2f"|format(plan.weekly_target) }}
+{% if not plan.on_track %}
+  Expected by now: £{{ "%.2f"|format(plan.expected_saved) }}
+  Behind by: £{{ "%.2f"|format(plan.behind_amount) }}
+{% endif %}
+
+--------------------------------------------
+{% endfor %}
+
+🌟 Keep up the great work! Every pound saved brings you closer to your goals.
+
+📱 Update your savings: {{ app_url }}
+
+============================================
+💰 Money Saver App
+📧 To unsubscribe: {{ unsubscribe_url }}
+============================================

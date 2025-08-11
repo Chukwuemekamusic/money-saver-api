@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Savings Reminder</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f4f4f4;
+        }
+        .container { 
+            background-color: #ffffff; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .header h1 { 
+            color: #2563eb; 
+            margin: 0; 
+            font-size: 28px;
+        }
+        .greeting { 
+            font-size: 18px; 
+            margin-bottom: 20px; 
+            color: #1f2937;
+        }
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin: 20px 0;
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center;
+        }
+        .stat-value { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin: 0;
+        }
+        .stat-label { 
+            font-size: 12px; 
+            opacity: 0.9; 
+            margin: 5px 0 0 0;
+        }
+        .progress-bar { 
+            background-color: #e5e7eb; 
+            border-radius: 10px; 
+            height: 20px; 
+            margin: 15px 0; 
+            overflow: hidden;
+        }
+        .progress-fill { 
+            background: linear-gradient(90deg, #10b981, #059669); 
+            height: 100%; 
+            transition: width 0.3s ease;
+        }
+        .plan-summary { 
+            background-color: #f9fafb; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 15px 0;
+        }
+        .plan-name { 
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 8px;
+        }
+        .plan-details { 
+            font-size: 14px; 
+            color: #6b7280; 
+            display: flex; 
+            justify-content: space-between;
+        }
+        .cta-button { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 15px 30px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 20px 0;
+        }
+        .motivation { 
+            background-color: #fef3c7; 
+            border-left: 4px solid #f59e0b; 
+            padding: 15px; 
+            margin: 20px 0; 
+            font-style: italic;
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 1px solid #e5e7eb; 
+            font-size: 12px; 
+            color: #6b7280;
+        }
+        .footer a { 
+            color: #2563eb; 
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .plan-details { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Money Saver</h1>
+            <p>Your Weekly Savings Reminder</p>
+        </div>
+
+        <div class="greeting">
+            Hi {{ user_name }}! 👋
+        </div>
+
+        <p>It's time for your weekly savings check-in. Here's how you're doing:</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">£{{ "%.2f"|format(total_saved_amount) }}</div>
+                <div class="stat-label">TOTAL SAVED</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">£{{ "%.2f"|format(total_target_this_week) }}</div>
+                <div class="stat-label">THIS WEEK'S TARGET</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <p><strong>Overall Progress:</strong> {{ overall_progress_percentage }}%</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ overall_progress_percentage }}%"></div>
+            </div>
+        </div>
+
+        <div class="motivation">
+            {{ motivation_message }}
+        </div>
+
+        {% if is_behind_schedule %}
+        <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0; border-radius: 8px;">
+            <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">📈 Catch-Up Opportunity</h4>
+            <p style="margin: 0; color: #991b1b;">You're {{ total_weeks_behind }} week{{ 's' if total_weeks_behind > 1 else '' }} behind your savings schedule.</p>
+            <p style="margin: 8px 0 0 0; color: #dc2626; font-weight: bold;">{{ catch_up_suggestion }}</p>
+        </div>
+        {% endif %}
+
+        {% if plan_summaries %}
+        <h3>Your Savings Plans:</h3>
+        {% for plan in plan_summaries %}
+        <div class="plan-summary" {% if not plan.on_track %}style="border-left: 3px solid #f59e0b;"{% endif %}>
+            <div class="plan-name">
+                {{ plan.name }}
+                {% if not plan.on_track %}
+                    <span style="color: #f59e0b; font-size: 12px; font-weight: normal;">⚠️ {{ plan.weeks_behind }} week{{ 's' if plan.weeks_behind > 1 else '' }} behind</span>
+                {% else %}
+                    <span style="color: #10b981; font-size: 12px; font-weight: normal;">✅ On track</span>
+                {% endif %}
+            </div>
+            <div class="plan-details">
+                <span>Saved: £{{ "%.2f"|format(plan.saved_amount) }} of £{{ "%.2f"|format(plan.target_amount) }}</span>
+                <span>Weekly Target: £{{ "%.2f"|format(plan.weekly_target) }}</span>
+            </div>
+            {% if not plan.on_track %}
+            <div style="font-size: 12px; color: #f59e0b; margin-top: 5px;">
+                Expected by now: £{{ "%.2f"|format(plan.expected_saved) }} • Behind by: £{{ "%.2f"|format(plan.behind_amount) }}
+            </div>
+            {% endif %}
+            <div class="progress-bar" style="height: 8px; margin-top: 8px;">
+                <div class="progress-fill" style="width: {{ plan.progress_percentage }}%"></div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div style="text-align: center;">
+            <a href="{{ app_url }}" class="cta-button">Update Your Savings →</a>
+        </div>
+
+        <div class="footer">
+            <p>Keep up the great work! Every pound saved brings you closer to your goals.</p>
+            <p>
+                <a href="{{ app_url }}">Open Money Saver App</a> | 
+                <a href="{{ unsubscribe_url }}">Unsubscribe</a>
+            </p>
+            <p>© 2025 Money Saver App. This email was sent because you have active savings plans.</p>
+        </div>
+    </div>
+</body>
+</html>
