@@ -27,9 +27,9 @@ A FastAPI-based backend service for a personal finance application that helps us
 app/
 ├── api/                    # API layer
 │   ├── dependencies.py     # Auth & dependency injection
-│   └── routes/            
+│   └── routes/
 │       ├── auth.py        # Authentication endpoints
-│       ├── savings.py     # Savings plan CRUD operations  
+│       ├── savings.py     # Savings plan CRUD operations
 │       └── email.py       # Email preferences & testing
 ├── core/                  # Core configurations
 │   ├── config.py         # Environment variables & settings
@@ -66,7 +66,7 @@ app/
 ### 1. Clone and Setup
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Chukwuemekamusic/money-saver-api.git
 cd fastapi-money-saver
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -119,6 +119,7 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 The API will be available at:
+
 - **API**: http://localhost:8000
 - **Docs**: http://localhost:8000/docs
 - **Health**: http://localhost:8000/health
@@ -126,11 +127,13 @@ The API will be available at:
 ## 📚 API Endpoints
 
 ### Authentication
+
 - `POST /api/v1/auth/sync-user` - Sync Supabase user to local database
 - `GET /api/v1/auth/me` - Get current user information
 - `POST /api/v1/auth/verify-token` - Verify JWT token
 
 ### Savings Management
+
 - `POST /api/v1/savings/plans` - Create new saving plan
 - `GET /api/v1/savings/plans` - List user's saving plans
 - `GET /api/v1/savings/plans/{id}` - Get specific saving plan
@@ -140,11 +143,13 @@ The API will be available at:
 - `GET /api/v1/savings/plans/{id}/stats` - Get plan statistics
 
 ### Email Management
+
 - `GET /api/v1/email/preferences` - Get email preferences
 - `PUT /api/v1/email/preferences` - Update email preferences
 - `POST /api/v1/email/test` - Send test email
 
 ### System
+
 - `GET /` - API information
 - `GET /health` - Comprehensive health check
 - `GET /docs` - Interactive API documentation
@@ -195,10 +200,10 @@ docker-compose down
 ### Deploy to Render
 
 1. **Connect Repository**: Link your GitHub repo to Render
-2. **Configure Service**: 
+2. **Configure Service**:
    - Environment: Docker
-   - Build Command: *Leave empty*
-   - Start Command: *Leave empty* (uses Dockerfile)
+   - Build Command: _Leave empty_
+   - Start Command: _Leave empty_ (uses Dockerfile)
 3. **Set Environment Variables**: Add all required env vars from `.env`
 4. **Deploy**: Render will auto-deploy on git push
 
@@ -271,10 +276,10 @@ pip freeze > requirements.txt
   "timestamp": "2025-01-15T10:00:00Z",
   "service": "Money Saver API",
   "version": "1.0.0",
-  "supabase": {"status": "connected"},
-  "database": {"status": "connected"},
-  "email_service": {"enabled": true, "configured": true},
-  "scheduler": {"running": true}
+  "supabase": { "status": "connected" },
+  "database": { "status": "connected" },
+  "email_service": { "enabled": true, "configured": true },
+  "scheduler": { "running": true }
 }
 ```
 
@@ -337,4 +342,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ using FastAPI**
 
-*A modern, fast, and feature-rich API for personal finance management.*
+_A modern, fast, and feature-rich API for personal finance management._
