@@ -37,16 +37,32 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db)
 ) -> User:
     """Get or create user in local database from Supabase user info"""
-    supabase_service = SupabaseService()
-    
-    # Try to get user from local database first
-    user = await supabase_service.get_user_by_id(db, user_info["user_id"])
-    
-    if not user:
-        # User doesn't exist in local DB, create from Supabase info
-        user = await supabase_service.sync_user_to_db(db, user_info)
-    
-    return user
+    try:
+        supabase_service = SupabaseService()
+        
+        # Try to get user from local database first
+        user = await supabase_service.get_user_by_id(db, user_info["user_id"])
+        
+        if not user:
+            # User doesn't exist in local DB, create from Supabase info
+            user = await supabase_service.sync_user_to_db(db, user_info)
+        
+        return user
+        
+    except Exception as e:
+        # If database operations fail, log error but still allow user through
+        # This prevents database issues from blocking authenticated users
+        print(f"Warning: Database operation failed for user {user_info.get('user_id', 'unknown')}: {e}")
+        
+        # Create a minimal user object from Supabase info for this request
+        # This allows the API to work even if the local database is having issues
+        from app.models.user import User
+        user = User(
+            id=user_info["user_id"],
+            email=user_info["email"],
+            provider=user_info.get("provider", "email")
+        )
+        return user
 
 
 async def get_optional_current_user(

@@ -46,10 +46,21 @@ async def verify_supabase_token(token: str) -> dict:
             "user_metadata": response.user.user_metadata
         }
         
+    except HTTPException:
+        # Re-raise HTTPExceptions (like 401s) as-is
+        raise
     except Exception as e:
-        if "Invalid JWT" in str(e) or "JWT expired" in str(e):
+        # Convert all other token verification errors to 401
+        # Common errors: malformed JWT, invalid signature, expired token, etc.
+        error_msg = str(e).lower()
+        if any(keyword in error_msg for keyword in [
+            "invalid jwt", "jwt expired", "malformed", "signature", 
+            "token", "unauthorized", "forbidden"
+        ]):
             raise HTTPException(status_code=401, detail="Invalid or expired token")
-        raise HTTPException(status_code=500, detail=f"Token verification failed: {str(e)}")
+        
+        # Only use 500 for genuine server errors (Supabase connectivity issues)
+        raise HTTPException(status_code=500, detail="Authentication service unavailable")
 
 
 async def get_user_from_supabase(user_id: str) -> Optional[dict]:
