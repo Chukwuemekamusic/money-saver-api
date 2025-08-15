@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     
     # CORS Configuration
     CORS_ORIGINS: str = Field(
-        default="http://localhost:3000,http://127.0.0.1:3000",
+        default="http://localhost:3000,http://127.0.0.1:3000,https://moneysaverapp.netlify.app",
         env="CORS_ORIGINS"
     )
     
@@ -58,9 +58,14 @@ class Settings(BaseSettings):
     REMINDER_HOUR: int = Field(default=9, env="REMINDER_HOUR")
     REMINDER_MINUTE: int = Field(default=0, env="REMINDER_MINUTE")
     
+    # Frontend and API URLs for emails
+    FRONTEND_URL: str = Field(default="https://moneysaverapp.netlify.app", env="FRONTEND_URL")
+    API_BASE_URL: str = Field(default="https://money-saver-api.onrender.com", env="API_BASE_URL")
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"
 
 
 @lru_cache()

@@ -163,8 +163,8 @@ class EmailService:
             'total_weeks_behind': total_weeks_behind,
             'catch_up_amount': round(catch_up_amount, 2),
             'is_behind_schedule': total_weeks_behind > 0,
-            'app_url': 'http://localhost:3000',  # Update with your frontend URL
-            'unsubscribe_url': f'http://localhost:8000/api/v1/email/unsubscribe?token={unsubscribe_token}'
+            'app_url': settings.FRONTEND_URL,
+            'unsubscribe_url': f'{settings.API_BASE_URL}/api/v1/email/unsubscribe?token={unsubscribe_token}'
         }
     
     def _calculate_weeks_elapsed(self, start_date) -> int:

@@ -21,11 +21,19 @@ def get_engine():
     if database_url.startswith("postgresql://"):
         database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
     
+    # Configure engine for Supabase connection pooler (pgbouncer) compatibility
+    connect_args = {}
+    
+    # If using Supabase connection pooler, disable statement caching for pgbouncer compatibility
+    if "pooler.supabase.com" in database_url:
+        connect_args["statement_cache_size"] = 0
+    
     return create_async_engine(
         database_url,
         echo=settings.DEBUG,
         future=True,
         pool_pre_ping=True,
+        connect_args=connect_args,
     )
 
 
